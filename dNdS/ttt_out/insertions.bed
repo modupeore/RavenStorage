@@ -1,0 +1,9 @@
+track name=insertions description="TopHat insertions"
+chr1	106561178	106561178	T	1
+chr2	98225693	98225693	T	1
+chrMT	3542	3542	A	1
+chrMT	7087	7087	T	2
+chrMT	10947	10947	C	1
+chrMT	14391	14391	C	1
+chrUn	32843852	32843852	T	1
+chrUn	32843876	32843876	C	1
