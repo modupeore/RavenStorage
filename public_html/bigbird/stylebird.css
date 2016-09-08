@@ -1,0 +1,536 @@
+/* 
+    Document   : bigbird_style
+    Created on : October 6, 2015
+    Author     : Modupe Adetunji
+    Description:
+        Presentation and formatting for Bigbird_DB
+*/
+
+root { 
+    display: block;
+}
+
+body {
+    background-color:white;
+    font-family: "calibri", arial, sans-serif;
+    height:100%;
+}
+
+html {
+    height:100%;
+    width:100%;
+}
+
+br {
+clear:both;
+}
+
+hr {
+    display: block;
+    height: 12px;
+    border: 0;
+    border-top: 5px solid #306269;
+    padding: 0;
+}
+
+#container {
+    min-height:100%;
+    position:relative;
+}
+
+h1 {
+    display:block;
+    margin-top:2em;
+    font-size:28pt; 
+    text-align:center;
+    font-family: "calibri", arial,sans-serif;
+    font-weight:bold;
+}
+
+h2 {
+    font-size:20pt; text-align:center;
+    font-family:"calibri", arial,sans-serif;
+}
+
+p.lspace {
+  padding:1ex 0ex 0ex 2ex;
+}
+#body {
+    width:80%;
+    margin-right:auto;
+    margin-left:auto;
+    padding-bottom:95px; 
+    clear:both;
+}
+
+/* HEAD */
+#head {
+   height:200px;
+   background-image:url('birdbase.png');
+   background-repeat:no-repeat;
+   background-position:50% 0%;
+}
+
+#head a#birdbase-link {
+    height:108px;
+    width:817px;
+    position:absolute;
+    left:50%;
+    margin-left:-408px;
+}
+
+#head a#birdbase-link span {
+    visibility:hidden;
+}
+
+
+/* FOOT */
+#footer {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:95px;
+    background:white;
+    border-top-color:gray;
+    border-top-style:dotted;
+    border-top-width:1px;
+    clear:both;
+}
+
+div#footer div#center {
+    width:500px;
+    margin-right:auto;
+    margin-left:auto;
+    text-align:center;
+}
+
+div#footer div#center span a.pic {
+display:table-cell;
+vertical-align:middle;
+float:left;
+}
+
+div#footer div#center span a img {
+    border:none;
+}
+
+div#valid {
+    position:absolute;
+    right:0;
+    top:0;
+}
+
+/* NAVBAR */
+#menu {
+    display:block;
+    position:relative;
+    margin-right:auto;
+    margin-left:auto;
+    top:108px;
+    width:827px;
+    background: none;
+    color:#FBE598;
+}
+
+#menu ol {
+    list-style: none;   
+    margin: 0;
+    padding: .3em
+}
+
+#menu li {
+    float: left;
+    position:relative;
+}
+
+#menu li a {
+    display:block;
+    background-color:#306269;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    padding-right: 15px;
+    padding-left: 15px;
+    text-decoration: none;
+    font-family: "calibri", arial, sans-serif;
+    color:#FBE598;
+}
+
+#menu li a:link {
+    color:#FBE598;
+}
+
+#menu li a:visited {
+    color:#FBE598;
+}
+
+#menu li a:hover {
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+}
+
+
+#menu li ul {
+    display:none;
+    position:absolute;
+    padding:0;
+    list-style:none;
+    
+}
+
+#menu li:hover ul {
+    display:block;
+}
+
+#menu li li {
+    float:none;
+    border-bottom:1px solid #ccc
+}
+
+#menu li li a {
+    font-size:10pt;
+    border:0;
+}
+
+#menu ul ul {
+    top:0;
+    left:100%;
+}
+
+#menu li:hover ul ul {
+    display:none;
+}
+
+#menu ul li:hover ul {
+    display:block;
+}
+
+#login-name {
+    position:absolute;
+    top:0;
+    right:0;
+    padding:.8em;
+    color:#FBE598;
+}
+
+/* GENE EXPLORER */
+div#search_div label:hover {
+    cursor:pointer;
+}
+
+div#search_div input:hover {
+    cursor:pointer;
+}
+
+div#search_div {
+    text-align:center;
+    background-color:white;
+}
+
+div#search_div span {
+    font-size:9pt;
+}
+
+div.lib-result {
+    margin-bottom:18px;
+    margin-left:0px;
+}
+
+/* COMPARE */
+div#compare {
+    padding-bottom:95px;
+}
+div#compare ol {
+    list-style:none;
+    padding:0px;
+    margin:0px;
+}
+
+div#compare tr.bottom {
+    border-bottom-style:dotted;
+    border-bottom-width:1px;
+}
+
+div#compare {
+    float:left;
+    margin-right:10px;
+    padding-right:10px;
+    border-right-width:1px;
+    border-right-style:dotted;
+}
+
+div#compare input.text {
+    width:50px;
+}
+
+div#compare label span {
+    display:block;
+}
+
+div#compare label span.small-text {
+    font-size:8pt;
+}
+
+div#compare tr {
+    background-color:white;
+}
+
+div#display-compare form{
+    display:inline;
+}
+
+div#display-compare div#meta-data {
+    margin-bottom:2em;
+}
+
+#display-compare #index-error {
+    clear:none;
+    display:block;
+}
+#display-compare span {
+    display:block;
+}
+#display-compare a {
+    clear:right;
+}
+#display-compare #index-error span {
+    clear:none;
+    display:block;
+}
+
+/* QUERY */
+#query span {
+    float:left;
+}
+
+#query {
+    margin-bottom:1em;
+}
+
+#download {
+    clear:left;
+    display:block;
+}
+
+/* DB_EDIT */
+#display-tables {
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:15px;
+}
+
+#sort span, #sort select, #sort input{
+    float:left;
+    margin-right:.5em;
+}
+
+#sort br {
+    clear:both;
+}
+
+#sort div {
+    clear:left;
+}
+
+#db-display p, #db-display form{
+    clear:left;
+}
+
+div#db-display span {
+    display:block;
+    clear:left;
+}
+
+#index-error {
+    clear:left;
+    display:block;
+}
+
+#index-error span{
+    clear:left;
+    display:block;
+}
+
+#insert-status span {
+    display:block;
+}
+
+#upload {
+    padding-bottom:.5em;
+    width:50%;
+}
+
+#upload ol {
+    list-style:none;
+    padding-left:0px;
+    margin:0px;
+}
+
+#upload ol ol {
+    display:inline-block;
+    top:0;
+    left:100%;
+}
+
+#upload label {
+    width:130px;
+    display:inline-block;
+}
+
+#iframe {
+    border:none;
+    width:0;
+    height:0;
+    display:none;
+}
+
+#status_msg {
+    width:100%;
+    height:5em;
+    overflow:auto;
+    font-family:courier,sans-serif;
+    background-color:white;
+    font-size:8pt;
+    border:1px;
+    border-style:dashed;
+    padding:2px;
+}
+
+.expand div {
+    position:relative;
+    margin-left:18px;
+}
+.expand span {
+    padding-left:18px;
+    cursor:pointer;
+}
+.expand-off span {
+    background: url('minus.png');
+    background-repeat:no-repeat;
+
+}
+
+.expand-on span {
+    background: url('plus.png');
+    background-repeat:no-repeat;
+}
+
+.expand-off div {
+    display:block;
+}
+.expand-on div {
+    display:none;
+}
+
+.top-border {
+    /*border-top-color:#306269;
+    border-top-width:2px;
+    border-top-style:dashed;
+    margin-top:1em;
+    padding-top:1em;*/
+}
+
+.lock {
+    border:none;
+    background-image: url('lock.png');
+    background-repeat:no-repeat;
+    cursor:pointer;
+    padding:8px;
+}
+
+.unlock {
+    border:none;
+    background: url('unlock.png');
+    background-repeat:no-repeat;
+    cursor:pointer;
+    padding:8px;
+}
+
+.edit-off {
+    border:none;
+    color:black;
+}
+
+p {
+    display:block;
+}
+
+/*TABLES*/
+table {
+    border-collapse:collapse;
+    width:100%;
+    
+}
+
+table.border, td.border, th.border {
+    padding-left:10px;
+    padding-right:10px;
+}
+
+th.border {
+    color:white; background-color:#306269;
+    font-family:arial; font-weight:normal; font-size:10pt;
+}
+table.result {
+    border: 1px solid black;
+    padding-left:10px;
+    padding-right:10px;
+
+}
+th.result {
+    padding-left:5px; padding-right:5px;
+    color:#306269; background-color:white;
+    font-family:arial; font-weight:bolder; font-size:11pt;
+}
+
+table.lines{
+    border: 5px outset darkslategray;
+    padding-left:10px;
+    padding-right:10px;  
+}
+
+td {
+    font-family:arial; font-weight:normal; font-size:10pt;
+}
+
+tbody tr:nth-child(even) {
+   background-color: #DDD;
+}
+
+tr.clean {
+   background-color: white;
+}
+
+/*FORM*/
+input[type="text"].forms {
+  display: block;
+  margin: 0;
+  width: 100%;
+  font-family: sans-serif;
+  font-size: 12px;
+}
+input[type="submit"] {
+    border-radius: none;
+    font-size: 12px; 
+    font-weight: bold;
+    background-color: #ffedca;
+}
+input[type="hidden"] {
+    border-radius: none;
+    font-size: 20px; 
+    font-weight: bold;
+    width: 100%;
+    max-width: 100px;
+    background-color: gray;
+    border-radius: none;
+}
+/* CONTACT*/
+div#contact p {
+    float:left;
+    margin-right:50px;
+}
+
+/* LOGIN*/
+div#login table tr {
+    background:white;
+}

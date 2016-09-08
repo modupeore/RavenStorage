@@ -89,7 +89,7 @@ use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 
  
 #ARGUMENTS
-my($help,$manual,$config,%CONFIGURE, $bamfile);
+my($help,$manual,$config,%CONFIGURE, $bamfile, $flag);
 GetOptions (
                                 "i|c|a|config=s"    =>      \$config,
                                 "h|help"        =>      \$help,
@@ -175,9 +175,8 @@ if ($CONFIGURE{"TYPEOFINPUT"} =~ /^BAM$/i) {
 }
 elsif ($CONFIGURE{"TYPEOFINPUT"} =~ /^FASTQ$/i) {
   if ($notify) { NOTIFICATION("Genome Assembly using TOPHAT");  }
+  $bamfile = "$outputfolder/accepted_hits.bam"; 
   ASSEMBLY();
-  print "yes";
-  $bamfile = "accepted_hits.bam"; 
 }
 #NOT IN EFFECT
 #ANNOTATION TOOL OPTIONS
@@ -201,11 +200,11 @@ sub ASSEMBLY {
   #TOPHAT assembly
   if ($notify) { NOTIFICATION("Assembly of the genome");  }
   #building index
- `$BOWTIE2-build $REF $REF`;
+  #`$BOWTIE2-build $REF $outputfolder/$outgatk`;
   if ($ANN){
-    `$TOPHAT --library-type fr-unstranded --no-coverage-search -G $ANN -p 24 -o $outputfolder $REF $CONFIGURE{"FILENAME"}`;
+  #  `$TOPHAT --library-type fr-unstranded --no-coverage-search -G $ANN -p 24 -o $outputfolder $outputfolder/$outgatk $CONFIGURE{"FILENAME"}`;
   }else {
-    `$TOPHAT --library-type fr-unstranded --no-coverage-search -p 24 -o $outputfolder $REF $CONFIGURE{"FILENAME"}`;
+  #  `$TOPHAT --library-type fr-unstranded --no-coverage-search -p 24 -o $outputfolder $outputfolder/$outgatk $CONFIGURE{"FILENAME"}`;
   }
   VARIANTS();
 }
@@ -217,11 +216,22 @@ sub VARIANTS{
   `java -jar $PICARDDIR CreateSequenceDictionary R=$REF O=$DICT`;
   if ($notify) { NOTIFICATION("Sequence Dictionary complete");  }
   
+  #QUALITY SCORE DISTRIBUTION
+  `java -jar $PICARDDIR QualityScoreDistribution INPUT=$bamfile OUTPUT=$outputfolder/qualityscores.txt CHART=$outputfolder/qualityscores.chart`;
+  #CHECK QUALITY SCORE DISTRIBUTION
+  open(CHECK,"<$outputfolder/qualityscores.txt");
+  while (<CHECK>) { if (((split("\t",$_, 2))[0]) > 59){ $flag = "--fix_misencoded_quality_scores"; } }
+  close CHECK;
+  
   #SORT BAM
-  `java -jar $PICARDDIR SortSam INPUT=$bamfile OUTPUT=$outputfolder/aln_sorted.bam SO=coordinate`;
+  if ($specie =~ /human/i || $specie =~ /homo/i){ #human samples can be reordered.
+    `java -jar $PICARDDIR ReorderSam INPUT=$bamfile OUTPUT=$outputfolder/aln_sorted.bam REFERENCE=$REF`;
+  } else {
+    `java -jar $PICARDDIR SortSam INPUT=$bamfile OUTPUT=$outputfolder/aln_sorted.bam SO=coordinate`;
+  }
   if ($notify) { NOTIFICATION("Sort Bam complete");  }      
   #ADDREADGROUPS
-  my $addreadgroup = "java -jar $PICARDDIR AddOrReplaceReadGroups INPUT=$outputfolder/aln_sorted.bam OUTPUT=$outputfolder/aln_sorted_add.bam SO=coordinate RGID=LAbel RGLB=Label RGPL=illumina RGPU=Label RGSM=Label";
+  my $addreadgroup = "java -jar $PICARDDIR AddOrReplaceReadGroups INPUT=$outputfolder/aln_sorted.bam OUTPUT=$outputfolder/aln_sorted_add.bam SO=coordinate RGID=Label RGLB=Label RGPL=illumina RGPU=Label RGSM=Label";
   `$addreadgroup`;
   if ($notify) { NOTIFICATION("Add read groups complete");  }
   
@@ -232,7 +242,7 @@ sub VARIANTS{
   
   if ($CONFIGURE{"TYPEOFDATA"} =~ /^RNA$/i) {
     #SPLIT&TRIM
-    my $splittrim = "java -jar $GATKDIR -T SplitNCigarReads -R $REF -I $outputfolder/aln_sorted_mdup.bam -o $outputfolder/aln_sorted_split.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 --filter_reads_with_N_cigar";
+    my $splittrim = "java -jar $GATKDIR -T SplitNCigarReads $flag -R $REF -I $outputfolder/aln_sorted_mdup.bam -o $outputfolder/aln_sorted_split.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 --filter_reads_with_N_cigar";
     `$splittrim`;
     if ($notify) { NOTIFICATION("SplitNCigars complete");  }
     
@@ -324,8 +334,8 @@ sub SORTGATK {
   else { open ($GDATA,$REF) or die $!;}
 
   #OPEN OUTPUT FILE(s)
-  open($GOUT1, "> $outputfolder/$outgatk.fna") or die $!;
-  open($GOUT2, "> $outputfolder/$outgatk.fna.fai") or die $!;
+  open($GOUT1, "> $outputfolder/$outgatk.fa") or die $!;
+  open($GOUT2, "> $outputfolder/$outgatk.fa.fai") or die $!;
   my @gatkref = <$GDATA>;
   shift(@gatkref);
   foreach my $entry (@gatkref){
@@ -341,9 +351,59 @@ sub SORTGATK {
     $GSEQnum{$pieces[0]} = length($seq);
     $GSEQheader{$pieces[0]} = length($pieces[0]);
   }
-  my ($check, $start, $newstart, $last);
-  foreach my $header (sort keys %GSEQ){
-    if (length($header) >= 1) {
+  my ($check, $start, $newstart, $last); 
+  unless ($specie =~ /human/i || $specie =~ /homo/i){
+    foreach my $header (sort keys %GSEQ){
+      if (length($header) >= 1) {
+        print $GOUT1 ">$header\n$GSEQ{$header}\n";
+        unless ($check){
+          $start = $GSEQheader{$header}+2;
+          $last = $GSEQnum{$header}+1;
+          print $GOUT2 "$header\t$GSEQnum{$header}\t$start\t$GSEQnum{$header}\t$last\n";
+          $check = "yes";
+        }
+        else {
+          $newstart = $GSEQheader{$header}+2+$last+$start;
+          $start = $newstart;
+          $last = $GSEQnum{$header}+1;
+          print $GOUT2 "$header\t$GSEQnum{$header}\t$start\t$GSEQnum{$header}\t$last\n";
+          $check = "yes";
+        }
+      }
+    }
+  }
+  else {
+    my %TEMPLATE = ''; my $prefix; my $header; my @chr_others = ("X","Y","M");
+    foreach my $pullheader (keys %GSEQ){
+      if (length($pullheader) >= 1) {
+        if ($pullheader =~ /^([A-Za-z]*)(\d+)$/) {
+          $prefix = $1;
+          $TEMPLATE{$2} = $pullheader;
+        }
+      }
+    }
+    foreach my $testheader (sort { $a <=> $b } keys %TEMPLATE){
+      if (length($testheader) >= 1) {
+        $header = $TEMPLATE{$testheader};
+        print $GOUT1 ">$header\n$GSEQ{$header}\n";
+        unless ($check){
+          $start = $GSEQheader{$header}+2;
+          $last = $GSEQnum{$header}+1;
+          print $GOUT2 "$header\t$GSEQnum{$header}\t$start\t$GSEQnum{$header}\t$last\n";
+          $check = "yes";
+        }
+        else {
+          $newstart = $GSEQheader{$header}+2+$last+$start;
+          $start = $newstart;
+          $last = $GSEQnum{$header}+1;
+          print $GOUT2 "$header\t$GSEQnum{$header}\t$start\t$GSEQnum{$header}\t$last\n";
+          $check = "yes";
+        }
+      }
+      delete $GSEQ{$header};
+    }
+    foreach (@chr_others){
+      my $header = $prefix.$_;
       print $GOUT1 ">$header\n$GSEQ{$header}\n";
       unless ($check){
         $start = $GSEQheader{$header}+2;
@@ -358,9 +418,10 @@ sub SORTGATK {
         print $GOUT2 "$header\t$GSEQnum{$header}\t$start\t$GSEQnum{$header}\t$last\n";
         $check = "yes";
       }
+      delete $GSEQ{$header};
     }
   }
   close $GDATA; close $GOUT1; close $GOUT2;
   $/ = "\n";
-  $REF = "$outputfolder/$outgatk.fna";
+  $REF = "$outputfolder/$outgatk.fa";
 }
